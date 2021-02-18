@@ -1,0 +1,40 @@
+version: '3.7'
+services:
+    apache:
+        build: './apache'
+        restart: always
+        ports:
+            - 80:80
+            - 443:443
+        restart: always
+        env_file: .env
+
+    php:
+        build: ./php
+        depends_on:
+            - db
+        ports:
+           - '9000'
+        volumes:
+        - ./code:/var/www/html
+        restart: always
+        env_file: .env
+
+    db:
+        build: ./db
+        restart: always
+        env_file: .env
+        ports:
+            - 3306:3306
+        volumes:
+        - ./db/logs:/var/log/mysql
+
+    phpmyadmin:
+        depends_on:
+            - db
+        image: phpmyadmin/phpmyadmin
+        env_file: .env
+        ports:
+            - 8080:80
+
+
